@@ -1,5 +1,3 @@
-
-
 # Test technique - Leboncoin
 
 ## Sommaire
