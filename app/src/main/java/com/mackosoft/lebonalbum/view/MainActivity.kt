@@ -20,6 +20,6 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        viewModel.fetchAlbums()
+        viewModel.fetchAlbums(this)
     }
 }

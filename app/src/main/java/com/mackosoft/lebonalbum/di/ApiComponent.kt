@@ -13,7 +13,7 @@ import javax.inject.Singleton
 ])
 interface ApiComponent {
 
-    fun inject(viewModel: MainViewModel)
+    fun inject(mainViewModel: MainViewModel)
 
     @Component.Builder
     interface Builder {

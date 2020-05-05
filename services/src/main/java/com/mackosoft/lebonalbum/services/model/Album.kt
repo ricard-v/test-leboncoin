@@ -1,9 +1,14 @@
 package com.mackosoft.lebonalbum.services.model
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "album_table")
 data class Album (
-    val albumId: Long,
-    val id: Long,
-    val title: String,
-    val url: String,
-    val thumbnailUrl: String
+    @PrimaryKey @ColumnInfo val id: Long,
+    @ColumnInfo             val albumId: Long,
+    @ColumnInfo             val title: String,
+    @ColumnInfo             val url: String,
+    @ColumnInfo             val thumbnailUrl: String
 )
