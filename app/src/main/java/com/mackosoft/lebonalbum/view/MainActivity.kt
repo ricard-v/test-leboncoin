@@ -1,9 +1,9 @@
-package com.mackosoft.lebonalbum
+package com.mackosoft.lebonalbum.view
 
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.observe
+import com.mackosoft.lebonalbum.R
 import com.mackosoft.lebonalbum.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -14,7 +14,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+
         viewModel.fetchAlbums()
     }
 }

@@ -4,21 +4,34 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mackosoft.lebonalbum.di.DaggerApiComponent
 import com.mackosoft.lebonalbum.services.communication.ApiClient
-import com.mackosoft.lebonalbum.services.communication.RetrofitBuilder
+import com.mackosoft.lebonalbum.services.communication.di.ApiModule
+import com.mackosoft.lebonalbum.services.communication.di.RetrofitModule
 import com.mackosoft.lebonalbum.services.model.Album
 import com.mackosoft.lebonalbum.services.model.Result
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 class MainViewModel : ViewModel() {
 
-    // TODO inject api client here
-    private val apiClient: ApiClient = ApiClient(RetrofitBuilder.apiService)
+    @Inject
+    lateinit var apiClient: ApiClient
 
     private val _albums = MutableLiveData<List<Album>>()
     val album : LiveData<List<Album>>
         get() =_albums
+
+
+    init {
+        DaggerApiComponent
+            .builder()
+            .providesRetrofitModule(RetrofitModule)
+            .providesApiModule(ApiModule)
+            .build()
+            .inject(this)
+    }
 
 
     fun fetchAlbums() {
