@@ -11,6 +11,6 @@ object ApiModule {
 
     @Provides
     @Singleton
-    fun providesApiClient(apiService: ApiService) =
-        ApiClient(apiService = apiService)
+    fun providesApiClient(apiService: ApiService) = ApiClient(apiService = apiService)
+
 }
