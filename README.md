@@ -3,12 +3,12 @@
 ## Sommaire
 1. Instructions
 2. Le code et son organisation
-4. Conclusion
 ---
 
 ## Instructions
 L'application doit charger une liste d'albums à partir [de ce point d'API REST](https://static.leboncoin.fr/img/shared/technical-test.json).
-Les données chargées doit être affichées à l'utilisateur et persister à fin d'être disponibles dans les conditions suivantes :
+
+Les données chargées doivent être affichées à l'utilisateur et persister à fin d'être disponibles dans les conditions suivantes :
 - accès _offline_;
 - changement de configuration (rotation, langue, écran _splité_, etc.); 
 - redémarrage de l'application ou du téléphone;
