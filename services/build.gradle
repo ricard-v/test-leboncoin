@@ -31,9 +31,12 @@ android {
 }
 
 dependencies {
-
     // Retrofit
-    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.google.code.gson:gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+
+    // Kotlin
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
 
     // Unit testing
     testImplementation "junit:junit:$junit_version"
