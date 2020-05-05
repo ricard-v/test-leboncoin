@@ -36,7 +36,6 @@ android {
 }
 
 dependencies {
-
     // Kotlin
     kapt "com.android.databinding:compiler:$databinding_compiler_version"
 
@@ -46,5 +45,5 @@ dependencies {
     androidTestImplementation "androidx.test:runner:$androidx_test_runner_version"
 
 
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+      fileTree(dir: 'libs', include: ['*.jar'])
 }
