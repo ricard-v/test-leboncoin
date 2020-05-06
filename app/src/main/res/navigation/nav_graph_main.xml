@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_nav_graph"
+    app:startDestination="@id/albumsListFragment">
+
+    <fragment
+        android:id="@+id/albumsListFragment"
+        android:name="com.mackosoft.lebonalbum.view.albumslist.AlbumsListFragment"
+        android:label="fragment_albumslist"
+        tools:layout="@layout/fragment_albumslist" >
+        <action
+            android:id="@+id/action_albumsListFragment_to_albumDetailsFragment"
+            app:destination="@id/albumDetailsFragment" >
+            <argument
+                android:name="album_id"
+                app:argType="long"/>
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/albumDetailsFragment"
+        android:name="com.mackosoft.lebonalbum.view.albumdetails.AlbumDetailsFragment"
+        android:label="fragment_albumdetails"
+        tools:layout="@layout/fragment_albumdetails" >
+        <argument
+            android:name="album_id"
+            app:argType="long" />
+    </fragment>
+</navigation>
