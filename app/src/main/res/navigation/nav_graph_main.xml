@@ -16,6 +16,9 @@
             <argument
                 android:name="album_id"
                 app:argType="long"/>
+            <argument
+                android:name="image_transition_name"
+                app:argType="string" />
         </action>
     </fragment>
     <fragment
@@ -26,5 +29,8 @@
         <argument
             android:name="album_id"
             app:argType="long" />
+        <argument
+            android:name="image_transition_name"
+            app:argType="string" />
     </fragment>
 </navigation>

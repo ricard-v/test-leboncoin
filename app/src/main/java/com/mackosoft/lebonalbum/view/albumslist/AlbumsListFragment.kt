@@ -2,13 +2,16 @@ package com.mackosoft.lebonalbum.view.albumslist
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.observe
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import com.mackosoft.lebonalbum.R
+import com.mackosoft.lebonalbum.databinding.AlbumslistItemDefaultBinding
 import com.mackosoft.lebonalbum.databinding.FragmentAlbumslistBinding
 import com.mackosoft.lebonalbum.model.DisplayableAlbum
 import com.mackosoft.lebonalbum.viewmodel.MainViewModel
@@ -53,11 +56,16 @@ class AlbumsListFragment : Fragment(R.layout.fragment_albumslist), AlbumHandler 
     }
 
 
-    override fun onAlbumSelected(displayableAlbum: DisplayableAlbum) {
+    override fun onAlbumSelected(displayableAlbum: DisplayableAlbum, binding: AlbumslistItemDefaultBinding) {
         val directions = AlbumsListFragmentDirections.actionAlbumsListFragmentToAlbumDetailsFragment(
-            displayableAlbum.album.id
+            displayableAlbum.album.id,
+            ViewCompat.getTransitionName(binding.imageThumbnail)!!
         )
 
-        findNavController().navigate(directions)
+        val extras = FragmentNavigatorExtras(
+            binding.imageThumbnail to ViewCompat.getTransitionName(binding.imageThumbnail)!!
+        )
+
+        findNavController().navigate(directions, extras)
     }
 }

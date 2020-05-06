@@ -3,9 +3,9 @@ package com.mackosoft.lebonalbum.view.albumslist
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.mackosoft.lebonalbum.R
 import com.mackosoft.lebonalbum.common.recyclerview.BindableViewHolder
 import com.mackosoft.lebonalbum.databinding.AlbumslistItemDefaultBinding
@@ -51,14 +51,24 @@ class AlbumsListAdapter(private val handler: AlbumHandler) : ListAdapter<Display
 
         init {
             itemView.setOnClickListener {
-                currentList.getOrNull(adapterPosition)?.let { handler.onAlbumSelected(it) }
+                currentList.getOrNull(adapterPosition)?.let { album ->
+                    handler.onAlbumSelected(album, binding)
+                }
             }
         }
 
 
         override fun bind(value: DisplayableAlbum) {
-            binding.imageThumbnail.loadImage(value.album.thumbnailUrl)
+            binding.imageThumbnail.loadImageWithPicasso(value.album.thumbnailUrl)
             binding.labelTitle.text = value.album.title
+
+            // Transition name to allow smooth transition to Details Fragment
+            ViewCompat.setTransitionName(
+                binding.imageThumbnail,
+                itemView.resources.getString(
+                    R.string.image_transition_name,
+                    value.album.id)
+            )
         }
     }
 
