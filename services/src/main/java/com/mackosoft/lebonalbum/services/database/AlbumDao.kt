@@ -14,6 +14,13 @@ interface AlbumDao {
 
 
     /**
+     * Retrieves a single album, from the album table, based on its id.
+     */
+    @Query("SELECT * FROM album_table WHERE albumId = :id")
+    suspend fun getAlbum(id: Long) : Album?
+
+
+    /**
      * Insert a list of Album into the album table.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)

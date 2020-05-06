@@ -5,12 +5,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.mackosoft.lebonalbum.R
 import com.mackosoft.lebonalbum.common.recyclerview.BindableViewHolder
 import com.mackosoft.lebonalbum.databinding.AlbumslistItemDefaultBinding
 import com.mackosoft.lebonalbum.model.DisplayableAlbum
 
-class AlbumsListAdapter : ListAdapter<DisplayableAlbum, BindableViewHolder<DisplayableAlbum>>(itemDifferCallback) {
+class AlbumsListAdapter(private val handler: AlbumHandler) : ListAdapter<DisplayableAlbum, BindableViewHolder<DisplayableAlbum>>(itemDifferCallback) {
 
     private companion object {
         private val itemDifferCallback = object : DiffUtil.ItemCallback<DisplayableAlbum?>() {
@@ -46,6 +47,13 @@ class AlbumsListAdapter : ListAdapter<DisplayableAlbum, BindableViewHolder<Displ
     private inner class AlbumDefaultItemViewHolder(itemView: View) : BindableViewHolder<DisplayableAlbum>(itemView) {
 
         private val binding = AlbumslistItemDefaultBinding.bind(itemView)
+
+
+        init {
+            itemView.setOnClickListener {
+                currentList.getOrNull(adapterPosition)?.let { handler.onAlbumSelected(it) }
+            }
+        }
 
 
         override fun bind(value: DisplayableAlbum) {

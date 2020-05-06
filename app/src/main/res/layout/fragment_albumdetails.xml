@@ -7,14 +7,30 @@
     android:layout_height="match_parent"
     tools:context=".view.albumdetails.AlbumDetailsFragment">
 
+    <com.mackosoft.lebonalbum.common.imageview.PicassoImageView
+        android:id="@+id/image_album"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintDimensionRatio="4:3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:id="@+id/label_title"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="AlbumDetailsFragment"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:paddingTop="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="24dp"
+        android:background="@drawable/background_top_gradient"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        android:textColor="@android:color/white"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

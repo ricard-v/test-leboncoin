@@ -3,6 +3,7 @@ package com.mackosoft.lebonalbum.viewmodel
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.*
+import com.mackosoft.lebonalbum.common.livedata.ViewModelEvent
 import com.mackosoft.lebonalbum.di.ContextModule
 import com.mackosoft.lebonalbum.di.DaggerAppComponent
 import com.mackosoft.lebonalbum.model.DisplayableAlbum
@@ -35,6 +36,10 @@ class MainViewModel(context: Context) : ViewModel() {
     val album: LiveData<List<DisplayableAlbum>>
         get() =_albums
 
+    private val _selectedAlbum = MutableLiveData<ViewModelEvent<Album>>()
+    val selectedAlbum: LiveData<ViewModelEvent<Album>>
+        get() = _selectedAlbum
+
 
     init {
         DaggerAppComponent
@@ -59,11 +64,22 @@ class MainViewModel(context: Context) : ViewModel() {
                 database.saveAllAlbums(result.data)
                 _albums.postValue(result.data.map { DisplayableAlbum(it) })
             } else if (result is Result.Error) {
-                // TODO show error
+                // TODO handle / show error
                 _albums.postValue(withContext(Dispatchers.IO) { database.getAllAlbums().map { DisplayableAlbum(it) } })
             }
 
             _isFetchingAlbums.postValue(false)
+        }
+    }
+
+
+    fun fetchAlbum(id: Long) {
+        viewModelScope.launch {
+            database.getAlbum(id)?.let {
+                _selectedAlbum.postValue(ViewModelEvent(it))
+            } ?: run {
+                // TODO handle / show error
+            }
         }
     }
 }
