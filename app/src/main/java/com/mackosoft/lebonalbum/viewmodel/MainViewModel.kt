@@ -2,6 +2,7 @@ package com.mackosoft.lebonalbum.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.*
 import com.mackosoft.lebonalbum.common.livedata.ViewModelEvent
 import com.mackosoft.lebonalbum.di.ContextModule
@@ -33,7 +34,7 @@ class MainViewModel(context: Context) : ViewModel() {
         get() = _isFetchingAlbums
 
     private val _albums = MutableLiveData<List<DisplayableAlbum>>(emptyList())
-    val album: LiveData<List<DisplayableAlbum>>
+    val albums: LiveData<List<DisplayableAlbum>>
         get() =_albums
 
     private val _selectedAlbum = MutableLiveData<ViewModelEvent<Album>>()
@@ -62,6 +63,7 @@ class MainViewModel(context: Context) : ViewModel() {
 
             if (result is Result.Success) {
                 database.saveAllAlbums(result.data)
+                Log.d("HELLO", "Notifying observer -> ${_albums.hasActiveObservers()}")
                 _albums.postValue(result.data.map { DisplayableAlbum(it) })
             } else if (result is Result.Error) {
                 // TODO handle / show error

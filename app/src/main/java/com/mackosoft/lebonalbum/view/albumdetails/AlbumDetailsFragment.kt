@@ -1,7 +1,9 @@
 package com.mackosoft.lebonalbum.view.albumdetails
 
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
@@ -9,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.observe
+import androidx.navigation.fragment.findNavController
 import androidx.transition.*
 import com.mackosoft.lebonalbum.R
 import com.mackosoft.lebonalbum.databinding.FragmentAlbumdetailsBinding
@@ -44,7 +47,20 @@ class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
                 }
             })
         }
+
+        sharedElementReturnTransition = TransitionSet().apply {
+            addTransition(ChangeBounds())
+            addTransition(ChangeTransform())
+            addTransition(ChangeClipBounds())
+//            addTransition(ChangeImageTransform()) --> weird position while animating
+        }
+
         postponeEnterTransition() // wait for image to be loaded
+
+        exitTransition = Fade(Fade.OUT)
+        enterTransition = Fade(Fade.IN)
+
+        setHasOptionsMenu(true)
     }
 
 
@@ -67,7 +83,10 @@ class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
         }
 
         binding.imageAlbum.doOnImageLoaded { startPostponedEnterTransition() }
+
+        (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
+
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -78,5 +97,13 @@ class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
                 binding.labelTitle.text = album.title
             }
         }
+    }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            android.R.id.home -> findNavController().popBackStack()
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

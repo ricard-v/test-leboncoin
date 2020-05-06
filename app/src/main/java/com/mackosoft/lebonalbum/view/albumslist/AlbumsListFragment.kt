@@ -2,14 +2,17 @@ package com.mackosoft.lebonalbum.view.albumslist
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.ViewCompat
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.observe
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.observe
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
+import androidx.transition.TransitionSet
 import com.mackosoft.lebonalbum.R
 import com.mackosoft.lebonalbum.databinding.AlbumslistItemDefaultBinding
 import com.mackosoft.lebonalbum.databinding.FragmentAlbumslistBinding
@@ -29,6 +32,13 @@ class AlbumsListFragment : Fragment(R.layout.fragment_albumslist), AlbumHandler 
     private val adapter = AlbumsListAdapter(this)
 
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        exitTransition = TransitionSet() // no transition
+    }
+
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -41,6 +51,8 @@ class AlbumsListFragment : Fragment(R.layout.fragment_albumslist), AlbumHandler 
         binding.albumsList.adapter = adapter
         binding.albumsList.addItemDecoration(AlbumsListDecoration())
         binding.refresher.setOnRefreshListener { viewModel.fetchAlbums() }
+
+        postponeEnterTransition()
     }
 
 
@@ -49,10 +61,19 @@ class AlbumsListFragment : Fragment(R.layout.fragment_albumslist), AlbumHandler 
 
         // safe to call interact with viewModel here
         viewModel.isFetchingAlbums.observe(viewLifecycleOwner) { binding.refresher.isRefreshing = it }
-        viewModel.album.observe(viewLifecycleOwner) { adapter.submitList(it) }
+        viewModel.albums.observe(viewLifecycleOwner) { adapter.submitList(it) }
 
-        // ready to fetch albums
-        viewModel.fetchAlbums()
+        // ready to fetch albums if needed
+        if (viewModel.albums.value!!.isEmpty()) {
+            viewModel.fetchAlbums()
+            startPostponedEnterTransition()
+        } else {
+            adapter.submitList(viewModel.albums.value!!) {
+                (binding.root.parent as? ViewGroup)?.doOnPreDraw {
+                    startPostponedEnterTransition()
+                }
+            }
+        }
     }
 
 
