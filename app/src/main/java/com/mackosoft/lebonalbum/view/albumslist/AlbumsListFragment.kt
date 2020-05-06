@@ -34,6 +34,7 @@ class AlbumsListFragment : Fragment(R.layout.fragment_albumslist) {
 
     private fun setupUI() {
         binding.albumsList.adapter = adapter
+        binding.albumsList.addItemDecoration(AlbumsListDecoration())
         binding.refresher.setOnRefreshListener { viewModel.fetchAlbums() }
     }
 
