@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.*
 import com.mackosoft.lebonalbum.di.ContextModule
 import com.mackosoft.lebonalbum.di.DaggerAppComponent
+import com.mackosoft.lebonalbum.model.DisplayableAlbum
 import com.mackosoft.lebonalbum.services.communication.ApiClient
 import com.mackosoft.lebonalbum.services.communication.di.ApiModule
 import com.mackosoft.lebonalbum.services.communication.di.RetrofitModule
@@ -19,22 +20,26 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
-class MainViewModel(application: Application) : AndroidViewModel(application) {
+class MainViewModel(context: Context) : ViewModel() {
 
     @Inject
     lateinit var apiClient: ApiClient
     @Inject
     lateinit var database: AlbumDao
 
-    private val _albums = MutableLiveData<List<Album>>()
-    val album: LiveData<List<Album>>
+    private val _isFetchingAlbums = MutableLiveData(false)
+    val isFetchingAlbums: LiveData<Boolean>
+        get() = _isFetchingAlbums
+
+    private val _albums = MutableLiveData<List<DisplayableAlbum>>(emptyList())
+    val album: LiveData<List<DisplayableAlbum>>
         get() =_albums
 
 
     init {
         DaggerAppComponent
             .builder()
-            .providesContext(ContextModule(application))
+            .providesContext(ContextModule(context))
             .providesRetrofitModule(RetrofitModule)
             .providesApiModule(ApiModule)
             .providesDatabaseModule(DatabaseModule)
@@ -46,14 +51,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun fetchAlbums() {
         viewModelScope.launch {
+            _isFetchingAlbums.postValue(true)
+
             val result = apiClient.getAlbums()
 
             if (result is Result.Success) {
-                _albums.postValue(result.data)
                 database.saveAllAlbums(result.data)
+                _albums.postValue(result.data.map { DisplayableAlbum(it) })
             } else if (result is Result.Error) {
-                _albums.postValue(withContext(Dispatchers.IO) { database.getAllAlbums() })
+                // TODO show error
+                _albums.postValue(withContext(Dispatchers.IO) { database.getAllAlbums().map { DisplayableAlbum(it) } })
             }
+
+            _isFetchingAlbums.postValue(false)
         }
     }
 }

@@ -10,9 +10,5 @@ class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        view.findViewById<TextView>(R.id.textView)?.let {
-            it.text = "album id = ${AlbumDetailsFragmentArgs.fromBundle(requireArguments()).albumId}"
-        }
     }
 }
