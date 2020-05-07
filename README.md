@@ -53,8 +53,9 @@ Une telle modularisation facilite la maintenance du code, par la séparation des
 L'application fera appel aux librairies suivantes pour son bon fonctionnement :
 1. `Dagger 2` pour l'injection des APIs du module`service` comme dépendances dans les parties du module `app` concernées.
 2. `Glide` pour le chargement et la mise en cache des images de façon asynchrone.
+3. `Picasso` en remplacement de `Glide`, pour le moment, car il y a soucis avec le service `via.placeholder.com` (voir _[issue](https://github.com/bumptech/glide/issues/3065)_)
 
 ---
 > Création: 05.05.20
-> Dernière édition: 05.05.20
+> Dernière édition: 06.05.20
 > Auteur: Vincent Ricard - ricard@intechinfo.fr

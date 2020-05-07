@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer name="fragment_albums_list_landscape_span_count">2</integer>
+
+</resources>
