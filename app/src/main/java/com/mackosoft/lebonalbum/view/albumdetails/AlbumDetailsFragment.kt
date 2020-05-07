@@ -1,5 +1,6 @@
 package com.mackosoft.lebonalbum.view.albumdetails
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -40,10 +41,12 @@ class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
             addListener(object : TransitionListenerAdapter() {
                 override fun onTransitionEnd(transition: Transition) {
                     super.onTransitionEnd(transition)
-                    binding.labelTitle
-                        .animate()
-                        .translationY(0f)
-                        .alpha(1f)
+                    val animator = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                        binding.labelTitle.animate().translationX(0f)
+                    } else {
+                        binding.labelTitle.animate().translationY(0f)
+                    }
+                    animator.alpha(1f)
                 }
             })
         }
@@ -79,7 +82,11 @@ class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
         }
 
         binding.labelTitle.doOnLayout {
-            binding.labelTitle.translationY = -binding.labelTitle.measuredHeight.toFloat()
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                binding.labelTitle.translationX = binding.labelTitle.measuredWidth.toFloat()
+            } else {
+                binding.labelTitle.translationY = -binding.labelTitle.measuredHeight.toFloat()
+            }
         }
 
         binding.imageAlbum.doOnImageLoaded { startPostponedEnterTransition() }

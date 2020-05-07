@@ -50,6 +50,7 @@ class AlbumsListFragment : Fragment(R.layout.fragment_albumslist), AlbumHandler 
     private fun setupUI() {
         binding.albumsList.adapter = adapter
         binding.albumsList.addItemDecoration(AlbumsListDecoration())
+        binding.albumsList.setHasFixedSize(true)
         binding.refresher.setOnRefreshListener { viewModel.fetchAlbums() }
 
         postponeEnterTransition()
@@ -59,7 +60,7 @@ class AlbumsListFragment : Fragment(R.layout.fragment_albumslist), AlbumHandler 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        // safe to call interact with viewModel here
+        // safe to interact with viewModel here
         viewModel.isFetchingAlbums.observe(viewLifecycleOwner) { binding.refresher.isRefreshing = it }
         viewModel.albums.observe(viewLifecycleOwner) { adapter.submitList(it) }
 
