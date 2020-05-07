@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.mackosoft.lebonalbum.services.model.Album
 
-@Database(entities = [Album::class], version = 1, exportSchema = false)
+@Database(entities = [Album::class], version = 2, exportSchema = false)
 abstract class AlbumDatabase : RoomDatabase() {
 
     abstract fun albumDao() : AlbumDao
@@ -21,10 +23,19 @@ abstract class AlbumDatabase : RoomDatabase() {
                     context.applicationContext,
                     AlbumDatabase::class.java,
                     "album_database"
-                ).build()
+                )
+                    .addMigrations(MIGRATION_1_2)
+                    .build()
             }
 
             return INSTANCE!!
+        }
+
+
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE `album_table` ADD isFavorite BOOLEAN NULL")
+            }
         }
     }
 }

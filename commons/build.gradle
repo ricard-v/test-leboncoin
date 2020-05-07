@@ -39,6 +39,7 @@ dependencies {
 
     // AndroidX
     implementation "androidx.appcompat:appcompat:$appCompat_version"
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
 
     // Image Loaders

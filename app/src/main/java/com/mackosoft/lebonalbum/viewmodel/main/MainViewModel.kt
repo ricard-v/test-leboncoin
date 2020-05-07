@@ -1,20 +1,20 @@
-package com.mackosoft.lebonalbum.viewmodel
+package com.mackosoft.lebonalbum.viewmodel.main
 
-import android.app.Application
 import android.content.Context
-import android.util.Log
-import androidx.lifecycle.*
-import com.mackosoft.lebonalbum.common.livedata.ViewModelEvent
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mackosoft.lebonalbum.di.ContextModule
 import com.mackosoft.lebonalbum.di.DaggerAppComponent
 import com.mackosoft.lebonalbum.model.DisplayableAlbum
+import com.mackosoft.lebonalbum.model.favoriteHeaderItem
+import com.mackosoft.lebonalbum.model.unFavoriteHeaderItem
 import com.mackosoft.lebonalbum.services.communication.ApiClient
 import com.mackosoft.lebonalbum.services.communication.di.ApiModule
 import com.mackosoft.lebonalbum.services.communication.di.RetrofitModule
 import com.mackosoft.lebonalbum.services.database.AlbumDao
-import com.mackosoft.lebonalbum.services.database.AlbumDatabase
 import com.mackosoft.lebonalbum.services.database.di.DatabaseModule
-import com.mackosoft.lebonalbum.services.model.Album
 import com.mackosoft.lebonalbum.services.model.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,12 +33,12 @@ class MainViewModel(context: Context) : ViewModel() {
     val isFetchingAlbums: LiveData<Boolean>
         get() = _isFetchingAlbums
 
-    private val _albums = MutableLiveData<List<DisplayableAlbum>>(emptyList())
+    private val _albums = MutableLiveData<List<DisplayableAlbum>>()
     val albums: LiveData<List<DisplayableAlbum>>
         get() =_albums
 
-    private val _selectedAlbum = MutableLiveData<ViewModelEvent<Album>>()
-    val selectedAlbum: LiveData<ViewModelEvent<Album>>
+    private val _selectedAlbum = MutableLiveData<DisplayableAlbum>()
+    val selectedAlbum: LiveData<DisplayableAlbum>
         get() = _selectedAlbum
 
 
@@ -54,7 +54,6 @@ class MainViewModel(context: Context) : ViewModel() {
     }
 
 
-
     fun fetchAlbums() {
         viewModelScope.launch {
             _isFetchingAlbums.postValue(true)
@@ -63,8 +62,7 @@ class MainViewModel(context: Context) : ViewModel() {
 
             if (result is Result.Success) {
                 database.saveAllAlbums(result.data)
-                Log.d("HELLO", "Notifying observer -> ${_albums.hasActiveObservers()}")
-                _albums.postValue(result.data.map { DisplayableAlbum(it) })
+                _albums.postValue(fetchFromDatabase())
             } else if (result is Result.Error) {
                 // TODO handle / show error
                 _albums.postValue(withContext(Dispatchers.IO) { database.getAllAlbums().map { DisplayableAlbum(it) } })
@@ -75,13 +73,35 @@ class MainViewModel(context: Context) : ViewModel() {
     }
 
 
-    fun fetchAlbum(id: Long) {
-        viewModelScope.launch {
-            database.getAlbum(id)?.let {
-                _selectedAlbum.postValue(ViewModelEvent(it))
-            } ?: run {
-                // TODO handle / show error
+    private suspend fun fetchFromDatabase(): List<DisplayableAlbum> {
+        return mutableListOf<DisplayableAlbum>().apply {
+
+            val favorites = database.getAllFavoriteAlbums()
+            val unFavorites = database.getAllUnFavoriteAlbums()
+
+            withContext(Dispatchers.Default) {
+                if (favorites.isNotEmpty()) {
+                    add(favoriteHeaderItem)
+                    addAll(favorites.map { DisplayableAlbum(it) })
+                }
+
+                if (unFavorites.isNotEmpty()) {
+                    add(unFavoriteHeaderItem)
+                    addAll(unFavorites.map { DisplayableAlbum(it) })
+                }
             }
+        }.toList()
+    }
+
+
+    fun setSelectedAlbum(displayableAlbum: DisplayableAlbum) {
+        _selectedAlbum.value = displayableAlbum
+    }
+
+    suspend fun setSelectedAlbumFavoriteOrNot(isFavorite: Boolean) {
+        _selectedAlbum.value!!.let {
+            it.album!!.isFavorite = isFavorite
+            withContext(Dispatchers.IO) { database.updateAlbum(it.album) }
         }
     }
 }

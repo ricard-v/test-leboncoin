@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="2"
+        app:spanCount="@integer/fragment_albums_list_landscape_span_count"
         tools:listitem="@layout/albumslist_item_default"
         tools:itemCount="5"/>
 

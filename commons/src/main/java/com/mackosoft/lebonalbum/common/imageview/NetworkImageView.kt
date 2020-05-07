@@ -14,9 +14,19 @@ import com.bumptech.glide.request.target.Target
 import com.bumptech.glide.request.target.ViewTarget
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.lang.Exception
 
 class NetworkImageView(context: Context, attrs: AttributeSet?) : AppCompatImageView(context, attrs) {
+
+    companion object {
+
+        fun preloadImageWithPicasso(url: String) = Picasso.get().load(url).fetch()
+
+    }
+
 
     private var onImageLoaded : (() -> Unit)? = null
 

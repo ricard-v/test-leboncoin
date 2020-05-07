@@ -1,10 +1,9 @@
 package com.mackosoft.lebonalbum.di
 
-import android.content.Context
 import com.mackosoft.lebonalbum.services.communication.di.ApiModule
 import com.mackosoft.lebonalbum.services.communication.di.RetrofitModule
 import com.mackosoft.lebonalbum.services.database.di.DatabaseModule
-import com.mackosoft.lebonalbum.viewmodel.MainViewModel
+import com.mackosoft.lebonalbum.viewmodel.main.MainViewModel
 import dagger.Component
 import javax.inject.Singleton
 

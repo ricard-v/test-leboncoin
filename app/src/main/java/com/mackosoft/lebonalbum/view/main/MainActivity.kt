@@ -1,4 +1,4 @@
-package com.mackosoft.lebonalbum.view
+package com.mackosoft.lebonalbum.view.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

@@ -10,5 +10,6 @@ data class Album (
     @ColumnInfo             val albumId: Long,
     @ColumnInfo             val title: String,
     @ColumnInfo             val url: String,
-    @ColumnInfo             val thumbnailUrl: String
+    @ColumnInfo             val thumbnailUrl: String,
+    @ColumnInfo             var isFavorite: Boolean = false
 )
