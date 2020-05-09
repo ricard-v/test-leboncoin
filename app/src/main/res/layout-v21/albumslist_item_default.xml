@@ -18,7 +18,6 @@
             android:layout_height="@dimen/fragment_albums_list_album_card_thumbnail_size"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:shapeAppearanceOverlay="@style/KitKatRoundedAlbumImage"
             tools:src="@android:drawable/ic_menu_camera"/>
 
         <TextView

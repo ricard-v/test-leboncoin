@@ -10,10 +10,11 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.imageview.ShapeableImageView
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
-class NetworkImageView(context: Context, attrs: AttributeSet?) : AppCompatImageView(context, attrs) {
+class NetworkImageView(context: Context, attrs: AttributeSet?) : ShapeableImageView(context, attrs) {
 
     companion object {
 
