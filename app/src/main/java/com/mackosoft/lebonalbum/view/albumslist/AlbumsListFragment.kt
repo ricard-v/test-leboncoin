@@ -90,17 +90,17 @@ class AlbumsListFragment : Fragment(R.layout.fragment_albumslist), AlbumHandler 
         // safe to interact with viewModel here
         viewModel.isFetchingAlbums.observe(viewLifecycleOwner) { binding.refresher.isRefreshing = it }
         viewModel.albums.observe(viewLifecycleOwner) {
-            adapter.submitList(it) { restoreListState() }
-        }
-
-        if (viewModel.albums.value.isNullOrEmpty()) {
-            startPostponedEnterTransition()
-        } else {
-            adapter.submitList(viewModel.albums.value!!) {
+            adapter.submitList(it) {
+                restoreListState()
                 (binding.root.parent as? ViewGroup)?.doOnPreDraw {
                     startPostponedEnterTransition()
                 }
             }
+        }
+        
+        if (viewModel.albums.value.isNullOrEmpty()) {
+            startPostponedEnterTransition()
+            viewModel.fetchAlbums()
         }
     }
 
@@ -115,7 +115,12 @@ class AlbumsListFragment : Fragment(R.layout.fragment_albumslist), AlbumHandler 
 
     override fun onResume() {
         super.onResume()
-        viewModel.fetchAlbums()
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        listState = binding.albumsList.layoutManager?.onSaveInstanceState()
     }
 
 
@@ -126,11 +131,9 @@ class AlbumsListFragment : Fragment(R.layout.fragment_albumslist), AlbumHandler 
 
         viewModel.setSelectedAlbum(displayableAlbum)
 
-        // ready to show details
         val extras = FragmentNavigatorExtras(
             binding.imageThumbnail to ViewCompat.getTransitionName(binding.imageThumbnail)!!
         )
-
         findNavController().navigate(directions, extras)
     }
 
@@ -140,7 +143,7 @@ class AlbumsListFragment : Fragment(R.layout.fragment_albumslist), AlbumHandler 
 
         outState.putParcelable(
             KEY_LIST_STATE,
-            binding.albumsList.layoutManager?.onSaveInstanceState()
+            listState
         )
     }
 

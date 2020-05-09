@@ -41,6 +41,9 @@ class MainViewModel(context: Context) : ViewModel() {
     val selectedAlbum: LiveData<DisplayableAlbum>
         get() = _selectedAlbum
 
+    private val favoritesAlbums = mutableListOf<DisplayableAlbum>()
+    private val unFavoritesAlbums = mutableListOf<DisplayableAlbum>()
+
 
     init {
         DaggerAppComponent
@@ -62,7 +65,8 @@ class MainViewModel(context: Context) : ViewModel() {
 
             if (result is Result.Success) {
                 database.saveAllAlbums(result.data)
-                _albums.postValue(fetchFromDatabase())
+                fetchFromDatabase()
+                _albums.postValue(buildAlbumsList())
             } else if (result is Result.Error) {
                 // TODO handle / show error
                 _albums.postValue(withContext(Dispatchers.IO) { database.getAllAlbums().map { DisplayableAlbum(it) } })
@@ -73,21 +77,27 @@ class MainViewModel(context: Context) : ViewModel() {
     }
 
 
-    private suspend fun fetchFromDatabase(): List<DisplayableAlbum> {
+    private suspend fun fetchFromDatabase() {
+        favoritesAlbums.clear()
+        unFavoritesAlbums.clear()
+        favoritesAlbums.addAll(database.getAllFavoriteAlbums().map { DisplayableAlbum(it) })
+        unFavoritesAlbums.addAll(database.getAllUnFavoriteAlbums().map { DisplayableAlbum(it) })
+    }
+
+
+    private suspend fun buildAlbumsList() : List<DisplayableAlbum> {
         return mutableListOf<DisplayableAlbum>().apply {
-
-            val favorites = database.getAllFavoriteAlbums()
-            val unFavorites = database.getAllUnFavoriteAlbums()
-
             withContext(Dispatchers.Default) {
-                if (favorites.isNotEmpty()) {
+                if (favoritesAlbums.isNotEmpty()) {
+                    favoritesAlbums.sortBy { it.album!!.id }
                     add(favoriteHeaderItem)
-                    addAll(favorites.map { DisplayableAlbum(it) })
+                    addAll(favoritesAlbums)
                 }
 
-                if (unFavorites.isNotEmpty()) {
+                if (unFavoritesAlbums.isNotEmpty()) {
+                    unFavoritesAlbums.sortBy { it.album!!.id }
                     add(unFavoriteHeaderItem)
-                    addAll(unFavorites.map { DisplayableAlbum(it) })
+                    addAll(unFavoritesAlbums)
                 }
             }
         }.toList()
@@ -99,9 +109,20 @@ class MainViewModel(context: Context) : ViewModel() {
     }
 
     suspend fun setSelectedAlbumFavoriteOrNot(isFavorite: Boolean) {
-        _selectedAlbum.value!!.let {
-            it.album!!.isFavorite = isFavorite
-            withContext(Dispatchers.IO) { database.updateAlbum(it.album) }
+        with(_selectedAlbum.value!!) {
+            this.album!!.isFavorite = isFavorite
+            withContext(Dispatchers.IO) { database.updateAlbum(this@with.album) }
+
+            // place album into correct list
+            if (isFavorite) {
+                unFavoritesAlbums.remove(this)
+                favoritesAlbums.add(this)
+            } else {
+                favoritesAlbums.remove(this)
+                unFavoritesAlbums.add(this)
+            }
+            // rebuild displayable list
+            _albums.postValue(buildAlbumsList())
         }
     }
 }

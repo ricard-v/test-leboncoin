@@ -23,6 +23,7 @@ object RetrofitModule {
     }
 
 
+
     @Singleton
     @Provides
     internal fun provideApiInterface(retrofit: Retrofit): ApiService = retrofit.create(

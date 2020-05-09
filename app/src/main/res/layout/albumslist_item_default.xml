@@ -6,6 +6,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="6dp"
     app:cardElevation="5dp"
+    app:cardPreventCornerOverlap="false"
+    app:cardUseCompatPadding="true"
     tools:context=".view.albumslist.AlbumsListAdapter$AlbumDefaultItemViewHolder">
 
     <androidx.constraintlayout.widget.ConstraintLayout
