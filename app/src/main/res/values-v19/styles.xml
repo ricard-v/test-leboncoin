@@ -2,6 +2,9 @@
 
     <style name="SplashScreenTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash_screen_background</item>
+		
+		<!-- status bar configuration -->
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar">
@@ -12,17 +15,5 @@
         <item name="colorControlHighlight">@color/colorAccent</item>
     </style>
 
-    <style name="AlbumCard">
-        <item name="cardCornerRadius">@dimen/fragment_albums_list_album_card_corner_radius</item>
-        <item name="cardElevation">5dp</item>
-        <item name="cardUseCompatPadding">false</item>
-        <item name="cardPreventCornerOverlap">false</item>
-    </style>
-
-    <style name="KitKatRoundedAlbumImage">
-        <item name="cornerFamily">rounded</item>
-        <item name="cornerSizeTopLeft">@dimen/fragment_albums_list_album_card_corner_radius</item>
-        <item name="cornerSizeBottomLeft">@dimen/fragment_albums_list_album_card_corner_radius</item>
-    </style>
 
 </resources>

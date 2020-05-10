@@ -1,0 +1,10 @@
+<resources>
+
+    <style name="SplashScreenTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash_screen_background</item>
+		 
+		 <!-- status bar configuration -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+</resources>
