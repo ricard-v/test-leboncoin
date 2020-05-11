@@ -24,9 +24,26 @@ android {
     }
 
     buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+
+            zipAlignEnabled true
+            debuggable true
+
+            buildConfigField "boolean", "USES_APP_CENTER", "false"
+        }
+
         release {
+            signingConfig signingConfigs.debug // no need for a proper release config for this test app
+
             minifyEnabled false
+            debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            buildConfigField "boolean", "USES_APP_CENTER", "true"
         }
     }
 
@@ -87,6 +104,11 @@ dependencies {
     implementation ("com.squareup.picasso:picasso:$picasso_version") {
         exclude group: "com.squareup.okhttp3"
     }
+
+    // App Center
+    implementation "com.microsoft.appcenter:appcenter-analytics:${appcenter_version}"
+    implementation "com.microsoft.appcenter:appcenter-crashes:${appcenter_version}"
+    implementation "com.microsoft.appcenter:appcenter-distribute:${appcenter_version}"
 
     // Unit testing
     testImplementation "junit:junit:$junit_version"
