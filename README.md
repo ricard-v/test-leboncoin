@@ -60,7 +60,7 @@ L'application fera appel aux librairies suivantes pour son bon fonctionnement :
 4. `OkHTTP 3.12.x` pour le support en mode _legacy_ des SDK antérieures à 21
 
 ## Téléchargement
-L'application peut être téléchargée via [ce lien AppCenter](https://install.appcenter.ms/users/vincent.ricard-rts.ch/apps/lebonalbum-test-lbc/distribution_groups/public) publique.
+L'application peut être téléchargée via [ce lien AppCenter](https://install.appcenter.ms/users/ricard-intechinfo.fr/apps/lebonalbum-test-lbc/distribution_groups/public) publique.
 
 
 ---
