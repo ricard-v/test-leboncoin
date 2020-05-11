@@ -16,6 +16,7 @@ import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.transition.TransitionSet
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.mackosoft.lebonalbum.R
 import com.mackosoft.lebonalbum.databinding.AlbumslistItemDefaultBinding
 import com.mackosoft.lebonalbum.databinding.FragmentAlbumslistBinding
@@ -97,8 +98,12 @@ class AlbumsListFragment : Fragment(R.layout.fragment_albumslist), AlbumHandler 
                 }
             }
         }
+
+        viewModel.onError.observe(viewLifecycleOwner) {
+            it.getContentIfNotHandled()?.let { error -> handleError(error) }
+        }
         
-        if (viewModel.albums.value.isNullOrEmpty()) {
+        if (viewModel.albums.value.isNullOrEmpty() || savedInstanceState != null) {
             startPostponedEnterTransition()
             viewModel.fetchAlbums()
         }
@@ -113,10 +118,19 @@ class AlbumsListFragment : Fragment(R.layout.fragment_albumslist), AlbumHandler 
     }
 
 
-    override fun onResume() {
-        super.onResume()
-
+    private fun handleError(error: MainViewModel.Error) {
+        val errorDialogBuilder = MaterialAlertDialogBuilder(requireContext())
+        when (error) {
+            MainViewModel.Error.FETCH_ALBUM_FAILED -> {
+                errorDialogBuilder
+                    .setTitle(R.string.fragment_album_lists_fetch_albums_error_title)
+                    .setMessage(R.string.fragment_album_lists_fetch_albums_error_message)
+                    .setPositiveButton(android.R.string.ok) { dialog, _ -> dialog.dismiss() }
+            }
+        }
+        errorDialogBuilder.show()
     }
+
 
     override fun onPause() {
         super.onPause()

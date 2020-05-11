@@ -1,0 +1,13 @@
+<resources>
+
+    <!-- Albums List -->
+    <string name="fragment_album_lists_header_favorite_albums">Albums en favoris</string>
+    <string name="fragment_album_lists_header_others_albums">Albums disponibles</string>
+    <string name="fragment_album_lists_fetch_albums_error_title">Échec !</string>
+    <string name="fragment_album_lists_fetch_albums_error_message">Désolé, une erreur s\'est produite pendant le chargement des albums.\n\nAffichage des dernières données chargées avec succès.\n\nVeuillez vérifier votre connexion et réessayer.</string>
+
+
+    <!-- Album Details -->
+    <string name="fragment_album_details_menu_action_favorite">Ajouter aux favoris</string>
+    <string name="fragment_album_details_menu_action_unfavorite">Supprimer des favoris</string>
+</resources>

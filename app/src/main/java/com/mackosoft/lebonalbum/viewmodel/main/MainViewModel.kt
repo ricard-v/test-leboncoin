@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mackosoft.lebonalbum.common.livedata.SingleLiveEvent
+import com.mackosoft.lebonalbum.common.livedata.ViewModelEvent
 import com.mackosoft.lebonalbum.di.ContextModule
 import com.mackosoft.lebonalbum.di.DaggerAppComponent
 import com.mackosoft.lebonalbum.model.DisplayableAlbum
@@ -41,6 +43,11 @@ class MainViewModel(context: Context) : ViewModel() {
     val selectedAlbum: LiveData<DisplayableAlbum>
         get() = _selectedAlbum
 
+    private val _onError = SingleLiveEvent<ViewModelEvent<Error>>()
+    val onError: LiveData<ViewModelEvent<Error>>
+        get() = _onError
+
+
     private val favoritesAlbums = mutableListOf<DisplayableAlbum>()
     private val unFavoritesAlbums = mutableListOf<DisplayableAlbum>()
 
@@ -64,15 +71,24 @@ class MainViewModel(context: Context) : ViewModel() {
             val result = apiClient.getAlbums()
 
             if (result is Result.Success) {
+                // updating database
                 database.saveAllAlbums(result.data)
-                fetchFromDatabase()
-                _albums.postValue(buildAlbumsList())
             } else if (result is Result.Error) {
-                // TODO handle / show error
-                _albums.postValue(withContext(Dispatchers.IO) { database.getAllAlbums().map { DisplayableAlbum(it) } })
+                _onError.postValue(ViewModelEvent(Error.FETCH_ALBUM_FAILED))
             }
 
+            // in any case, load from DB and display
+            fetchFromDatabase()
+            _albums.postValue(buildAlbumsList())
             _isFetchingAlbums.postValue(false)
+        }
+    }
+
+
+    fun fetchAlbum(albumId: Long) {
+        viewModelScope.launch {
+            val album = database.getAlbum(albumId)
+            _selectedAlbum.postValue(DisplayableAlbum(album))
         }
     }
 
@@ -124,5 +140,9 @@ class MainViewModel(context: Context) : ViewModel() {
             // rebuild displayable list
             _albums.postValue(buildAlbumsList())
         }
+    }
+
+    enum class Error {
+        FETCH_ALBUM_FAILED
     }
 }

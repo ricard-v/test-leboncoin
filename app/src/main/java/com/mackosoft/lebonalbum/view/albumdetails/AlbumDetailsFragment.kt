@@ -26,6 +26,10 @@ import kotlinx.coroutines.launch
 
 class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
 
+    private companion object {
+        const val STATE_KEY_SELECTED_ALBUM_ID = "key_selected_album_id"
+    }
+
     private val viewModel by activityViewModels<MainViewModel> { object : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST")
@@ -125,6 +129,11 @@ class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
             requireActivity().invalidateOptionsMenu()
         }
 
+        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_KEY_SELECTED_ALBUM_ID)) {
+            // restore selected album on app restore
+            viewModel.fetchAlbum(savedInstanceState.getLong(STATE_KEY_SELECTED_ALBUM_ID))
+        }
+
     }
 
 
@@ -168,5 +177,14 @@ class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
             viewModel.setSelectedAlbumFavoriteOrNot(isFavorite)
             requireActivity().invalidateOptionsMenu()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putLong(
+            STATE_KEY_SELECTED_ALBUM_ID,
+            viewModel.selectedAlbum.value?.album!!.albumId
+        )
     }
 }
