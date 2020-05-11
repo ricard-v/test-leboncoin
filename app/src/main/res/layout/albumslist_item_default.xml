@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/AlbumCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".view.albumslist.AlbumsListAdapter$AlbumDefaultItemViewHolder">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless">
+
+        <com.mackosoft.lebonalbum.common.imageview.NetworkImageView
+            android:id="@+id/image_thumbnail"
+            android:layout_width="@dimen/fragment_albums_list_album_card_thumbnail_size"
+            android:layout_height="@dimen/fragment_albums_list_album_card_thumbnail_size"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:shapeAppearanceOverlay="@style/KitKatRoundedAlbumImage"
+            tools:src="@android:drawable/ic_menu_camera"/>
+
+        <TextView
+            android:id="@+id/label_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:ellipsize="end"
+            app:layout_constraintTop_toTopOf="@+id/image_thumbnail"
+            app:layout_constraintStart_toEndOf="@+id/image_thumbnail"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/image_thumbnail"
+            tools:text="natus magnam iure rerum pariatur molestias dolore nisi"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

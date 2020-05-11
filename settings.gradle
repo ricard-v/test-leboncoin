@@ -1,0 +1,4 @@
+rootProject.name='LeBonAlbum'
+include ':app'
+include ':services'
+include ':commons'

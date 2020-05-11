@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- Attempting to use same colors as in Leboncoin app -->
+<resources>
+    <color name="colorPrimary">#ff6e14</color>
+    <color name="colorPrimaryDark">#d15e00</color>
+    <color name="colorAccent">#4183d7</color>
+</resources>
