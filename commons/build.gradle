@@ -37,14 +37,19 @@ android {
 
 dependencies {
 
-    // AndroidX
+    // AndroidX + Google
     implementation "androidx.appcompat:appcompat:$appCompat_version"
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
+    implementation "com.google.android.material:material:$material_version"
 
     // Image Loaders
-    implementation "com.github.bumptech.glide:glide:$glide_version"
-    implementation "com.squareup.picasso:picasso:$picasso_version"
+    implementation ("com.github.bumptech.glide:glide:$glide_version") {
+        exclude group: "com.squareup.okhttp3"
+    }
+    implementation ("com.squareup.picasso:picasso:$picasso_version") {
+        exclude group: "com.squareup.okhttp3"
+    }
 
     // Unit testing
     testImplementation "junit:junit:$junit_version"

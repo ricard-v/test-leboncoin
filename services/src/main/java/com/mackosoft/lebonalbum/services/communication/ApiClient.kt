@@ -2,9 +2,9 @@ package com.mackosoft.lebonalbum.services.communication
 
 import android.util.Log
 import com.mackosoft.lebonalbum.services.model.Album
+import com.mackosoft.lebonalbum.services.model.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.mackosoft.lebonalbum.services.model.Result
 import javax.inject.Inject
 
 class ApiClient @Inject constructor(private val apiService: ApiService) {

@@ -16,10 +16,10 @@ class AlbumsListDecoration(
 
     private var currentHeader: Pair<Int, RecyclerView.ViewHolder>? = null
 
-    private val marginTop       = 16.asPx
+    private val marginTop       = 8.asPx
     private val marginStart     = 16.asPx
     private val marginEnd       = 16.asPx
-    private val marginBottom    = 16.asPx
+    private val marginBottom    = 8.asPx
 
 
     init {

@@ -52,14 +52,17 @@ dependencies {
     implementation project(':commons')
     implementation project(':services')
 
-    // AndroidX
+    // AndroidX + Google
     implementation "androidx.activity:activity-ktx:$activity_version"
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayout_version"
     implementation "androidx.fragment:fragment-ktx:$fragment_version"
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
     implementation "androidx.recyclerview:recyclerview:$recyclerview_version"
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$swiperefreshlayout_version"
+    implementation "androidx.transition:transition:$transition_version"
     implementation "androidx.vectordrawable:vectordrawable:$vectordrawable_version"
+    implementation "com.google.android.material:material:$material_version"
 
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
@@ -69,16 +72,21 @@ dependencies {
     implementation  "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
 
-    // Retrofit (required to work with dagger as the logic in the `services` module
-    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
-    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    // Retrofit (required to work with dagger as the logic is in the `services` module
+    implementation ("com.squareup.retrofit2:retrofit:$retrofit_version") {
+        exclude group: "com.squareup.okhttp3"
+    }
 
     // Room (see issue https://stackoverflow.com/questions/53152796/androidx-room-unresolved-supertypes-roomdatabase)
     implementation "androidx.room:room-runtime:$room_version"
 
     // Image Loaders
-    implementation "com.github.bumptech.glide:glide:$glide_version"
-    implementation "com.squareup.picasso:picasso:$picasso_version"
+    implementation ("com.github.bumptech.glide:glide:$glide_version") {
+        exclude group: "com.squareup.okhttp3"
+    }
+    implementation ("com.squareup.picasso:picasso:$picasso_version") {
+        exclude group: "com.squareup.okhttp3"
+    }
 
     // Unit testing
     testImplementation "junit:junit:$junit_version"

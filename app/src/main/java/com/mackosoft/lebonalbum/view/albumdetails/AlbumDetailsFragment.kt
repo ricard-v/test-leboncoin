@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MenuItem.SHOW_AS_ACTION_IF_ROOM
 import android.view.View
+import android.view.ViewPropertyAnimator
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.doOnLayout
@@ -25,6 +26,10 @@ import kotlinx.coroutines.launch
 
 class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
 
+    private companion object {
+        const val STATE_KEY_SELECTED_ALBUM_ID = "key_selected_album_id"
+    }
+
     private val viewModel by activityViewModels<MainViewModel> { object : ViewModelProvider.Factory {
         override fun <T : ViewModel?> create(modelClass: Class<T>): T {
             @Suppress("UNCHECKED_CAST")
@@ -36,39 +41,34 @@ class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
 
     private lateinit var binding: FragmentAlbumdetailsBinding
 
-    private var menuActionFavoriteId: Int? = null
-    private var menuActionUnFavoriteId: Int? = null
+    private var menuActionFavorite: MenuItem? = null
+    private var menuActionUnFavorite: MenuItem? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        sharedElementEnterTransition = TransitionSet().apply {
-            addTransition(ChangeBounds())
-            addTransition(ChangeTransform())
-            addTransition(ChangeClipBounds())
-            addTransition(ChangeImageTransform())
-            addListener(object : TransitionListenerAdapter() {
-                override fun onTransitionEnd(transition: Transition) {
-                    super.onTransitionEnd(transition)
-                    val animator = if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                        binding.labelTitle.animate().translationX(0f)
-                    } else {
-                        binding.labelTitle.animate().translationY(0f)
+        if (savedInstanceState == null) { // fragment was no recreated due to a configuration change
+            sharedElementEnterTransition = TransitionSet().apply {
+                addTransition(ChangeBounds())
+                addTransition(ChangeTransform())
+                addTransition(ChangeClipBounds())
+                addTransition(ChangeImageTransform())
+                addListener(object : TransitionListenerAdapter() {
+                    override fun onTransitionEnd(transition: Transition) {
+                        super.onTransitionEnd(transition)
+                        animateTitleIn()
                     }
-                    animator.alpha(1f)
-                }
-            })
-        }
+                })
+            }
 
-        sharedElementReturnTransition = TransitionSet().apply {
-            addTransition(ChangeBounds())
-            addTransition(ChangeTransform())
-            addTransition(ChangeClipBounds())
+            sharedElementReturnTransition = TransitionSet().apply {
+                addTransition(ChangeBounds())
+                addTransition(ChangeTransform())
+                addTransition(ChangeClipBounds())
 //            addTransition(ChangeImageTransform()) --> weird position while animating
+            }
         }
-
-        postponeEnterTransition() // wait for image to be loaded
 
         exitTransition = Fade(Fade.OUT)
         enterTransition = Fade(Fade.IN)
@@ -81,26 +81,42 @@ class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
         super.onViewCreated(view, savedInstanceState)
 
         binding = FragmentAlbumdetailsBinding.bind(view)
-        setupUI()
+        setupUI(savedInstanceState)
     }
 
 
-    private fun setupUI() {
+    private fun setupUI(savedInstanceState: Bundle?) {
         with (AlbumDetailsFragmentArgs.fromBundle(requireArguments())) {
             ViewCompat.setTransitionName(binding.imageAlbum, imageTransitionName)
         }
 
+        postponeEnterTransition() // wait for image to be loaded
         binding.labelTitle.doOnLayout {
             if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                 binding.labelTitle.translationX = binding.labelTitle.measuredWidth.toFloat()
             } else {
                 binding.labelTitle.translationY = -binding.labelTitle.measuredHeight.toFloat()
             }
+
+            if (savedInstanceState != null) { // fragment was recreated. There won't be transition animations
+                animateTitleIn()
+            }
         }
 
         binding.imageAlbum.doOnImageLoaded { startPostponedEnterTransition() }
 
         (activity as? AppCompatActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+
+    private fun animateTitleIn() : ViewPropertyAnimator {
+        val animator =
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                binding.labelTitle.animate().translationX(0f)
+            } else {
+                binding.labelTitle.animate().translationY(0f)
+            }
+        return animator.alpha(1f)
     }
 
 
@@ -112,26 +128,32 @@ class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
             binding.labelTitle.text = it.album.title
             requireActivity().invalidateOptionsMenu()
         }
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_KEY_SELECTED_ALBUM_ID)) {
+            // restore selected album on app restore
+            viewModel.fetchAlbum(savedInstanceState.getLong(STATE_KEY_SELECTED_ALBUM_ID))
+        }
+
     }
 
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         viewModel.selectedAlbum.value?.let {
             if (it.album!!.isFavorite) {
+                menuActionUnFavorite?.let { item -> menu.removeItem(item.itemId) }
                 // add un-favorite action
-                menu.add(R.string.fragment_album_details_menu_action_unfavorite).apply {
+                menuActionUnFavorite = menu.add(R.string.fragment_album_details_menu_action_unfavorite).apply {
                     this.icon = VectorDrawableCompat.create(resources, R.drawable.ic_favorite, null)
                     this.setShowAsAction(SHOW_AS_ACTION_IF_ROOM)
-                    menuActionUnFavoriteId = this.itemId
-                    menuActionFavoriteId = null
+                    menuActionFavorite = null
                 }
             } else {
+                menuActionFavorite?.let { item -> menu.removeItem(item.itemId) }
                 // add favorite action
-                menu.add(R.string.fragment_album_details_menu_action_favorite).apply {
+                menuActionFavorite = menu.add(R.string.fragment_album_details_menu_action_favorite).apply {
                     this.icon = VectorDrawableCompat.create(resources, R.drawable.ic_un_favorite, null)
                     this.setShowAsAction(SHOW_AS_ACTION_IF_ROOM)
-                    menuActionFavoriteId = this.itemId
-                    menuActionUnFavoriteId = null
+                    menuActionUnFavorite = null
                 }
             }
         }
@@ -142,8 +164,8 @@ class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            menuActionFavoriteId    -> setFavoriteOrNot(true)
-            menuActionUnFavoriteId  -> setFavoriteOrNot(false)
+            menuActionFavorite?.itemId    -> setFavoriteOrNot(true)
+            menuActionUnFavorite?.itemId  -> setFavoriteOrNot(false)
             android.R.id.home       -> findNavController().popBackStack()
         }
         return super.onOptionsItemSelected(item)
@@ -155,5 +177,14 @@ class AlbumDetailsFragment : Fragment(R.layout.fragment_albumdetails) {
             viewModel.setSelectedAlbumFavoriteOrNot(isFavorite)
             requireActivity().invalidateOptionsMenu()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putLong(
+            STATE_KEY_SELECTED_ALBUM_ID,
+            viewModel.selectedAlbum.value?.album!!.albumId
+        )
     }
 }
