@@ -4,7 +4,6 @@ import android.content.Context
 import com.mackosoft.lebonalbum.services.database.AlbumDatabase
 import dagger.Module
 import dagger.Provides
-import javax.inject.Inject
 import javax.inject.Singleton
 
 @Module

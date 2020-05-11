@@ -1,7 +1,6 @@
 package com.mackosoft.lebonalbum.view.main
 
 import android.os.Bundle
-import android.os.SystemClock
 import androidx.appcompat.app.AppCompatActivity
 import com.mackosoft.lebonalbum.R
 
